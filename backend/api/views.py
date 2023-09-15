@@ -1,15 +1,12 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from products.models import Product
+from django.forms.models import model_to_dict
 
 
 def api_home(request, *args, **kwargs):
-    body = request.body # byte striong of JSON data
+    model_data = Product.objects.all().order_by("?").first()
     data = {}
-    try:
-        data = json.loads(body)
-    except:
-        pass
-    print(data)
-    # data['headers'] = request.headers
-    # data['content_type'] = request.content_type
+    if model_data:
+        data = model_to_dict(model_data, fields=['id', 'title', 'price'])
     return JsonResponse(data)
