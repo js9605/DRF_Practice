@@ -1,4 +1,4 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions, authentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -9,6 +9,8 @@ from .serializers import ProductSerializer
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.DjangoModelPermissions]
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
@@ -27,6 +29,7 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 class ProductUpdateAPIView(generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
     lookup_field = 'pk'
 
     def perform_update(self, serializer):
@@ -62,8 +65,6 @@ class ProductMixinView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Re
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-    
-    #do similar perform_delete, perform_update
 
 
 # Same as generic above but list based views!
