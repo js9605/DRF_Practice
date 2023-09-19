@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -46,6 +46,25 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
 #     queryset = Product.objects.all()
 #     serializer_class = ProductSerializer
 
+#handles list view and detail view
+class ProductMixinView(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk' # RetrieveModelMixin
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+    
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+    
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    #do similar perform_delete, perform_update
+
 
 # Same as generic above but list based views!
 @api_view(['GET', 'POST'])
@@ -77,6 +96,7 @@ def product_alt_view(request, pk=None, *args, **kwargs):
         return Response({"invalid data": "not good data"}, status=400)
 
 
+product_mixin_view = ProductMixinView.as_view()
 product_list_create_view = ProductListCreateAPIView.as_view()
 product_detail_view = ProductDetailAPIView.as_view()
 product_update_view = ProductUpdateAPIView.as_view()
