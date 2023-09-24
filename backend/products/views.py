@@ -12,13 +12,15 @@ class ProductListCreateAPIView(generics.ListCreateAPIView, StaffEditorPermission
     serializer_class = ProductSerializer
 
     def perform_create(self, serializer):
+        # email = serializer.validated_data.pop('email')
+        # print(email)
         # serializer.save(user=self.request.user)
         #print(serializer.validated_data)
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(content=content) # like form.save() or model.dave()
 
 class ProductDetailAPIView(StaffEditorPermissionMixin, generics.RetrieveAPIView):
     queryset = Product.objects.all()
