@@ -22,6 +22,11 @@ class ProductListCreateAPIView(generics.ListCreateAPIView, StaffEditorPermission
             content = title
         serializer.save(content=content) # like form.save() or model.dave()
 
+    def get_queryset(self, *args, **kwargs):
+        request = self.request
+        print(request.user)
+        return super().get_queryset(*args, **kwargs)
+
 class ProductDetailAPIView(StaffEditorPermissionMixin, generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
