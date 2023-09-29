@@ -13,9 +13,7 @@ class ProductListCreateAPIView(UserQuerySetMixin, generics.ListCreateAPIView, St
 
     def perform_create(self, serializer):
         # email = serializer.validated_data.pop('email')
-        # print(email)
         # serializer.save(user=self.request.user)
-        #print(serializer.validated_data)
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None
         if content is None:
